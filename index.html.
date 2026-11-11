@@ -1,0 +1,217 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#101827">
+<title>Gatesh - Instalment Manager</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#f1f4f9;color:#182337;font-family:Arial,sans-serif}
+header{background:#101827;color:white;padding:23px 18px 25px;border-radius:0 0 22px 22px}
+header h1{margin:0;font-size:27px}
+header p{color:#b9c4d5;margin:7px 0 0;font-size:13px}
+main{padding:16px;max-width:650px;margin:auto}
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:11px;margin-top:5px}
+.card{background:white;border-radius:13px;padding:15px;box-shadow:0 2px 9px #15243b0c;margin-bottom:12px}
+.stat small{color:#718096;font-size:12px}
+.stat strong{display:block;font-size:21px;margin-top:9px}
+.green{color:#078653}.orange{color:#c47a12}
+nav{display:flex;gap:7px;overflow:auto;margin:17px 0}
+nav button{white-space:nowrap;border:0;padding:11px 13px;border-radius:9px;background:#e0e7f0;color:#26364e;font-weight:bold}
+nav button.active{background:#14233a;color:white}
+h2{font-size:18px;margin:4px 0 15px}
+input,select{width:100%;padding:13px;border:1px solid #d8dfeb;border-radius:9px;margin:7px 0 13px;font-size:15px;background:white}
+label{font-size:13px;font-weight:bold;color:#42516a}
+button.primary{width:100%;border:0;background:#087b58;color:white;padding:14px;border-radius:10px;font-weight:bold;font-size:15px}
+button.secondary{border:0;background:#e7edf5;padding:9px 12px;border-radius:8px;color:#26364e}
+.customer{border-bottom:1px solid #edf0f4;padding:13px 0}
+.customer:last-child{border:0}
+.customer strong{font-size:15px}
+.customer p{font-size:12px;color:#718096;margin:6px 0}
+.money{font-weight:bold}
+.badge{font-size:11px;background:#fff0d9;color:#a45e00;padding:5px 8px;border-radius:20px}
+.badge.paid{background:#dff6e9;color:#087b58}
+.hidden{display:none}
+.muted{color:#718096;font-size:13px}
+footer{text-align:center;color:#8591a3;padding:20px;font-size:12px}
+</style>
+</head>
+<body>
+<header>
+<h1>Gatesh</h1>
+<p>PHONE INSTALMENT MANAGEMENT</p>
+</header>
+<main>
+<div class="stats">
+<div class="card stat"><small>Total customers</small><strong id="customers">0</strong></div>
+<div class="card stat"><small>Total collected</small><strong class="green" id="collected">KSh 0</strong></div>
+<div class="card stat"><small>Outstanding balance</small><strong class="orange" id="balance">KSh 0</strong></div>
+<div class="card stat"><small>Overdue customers</small><strong id="overdue">0</strong></div>
+</div>
+
+<nav>
+<button class="active" onclick="show('home',this)">Dashboard</button>
+<button onclick="show('add',this)">Add customer</button>
+<button onclick="show('list',this)">Customers</button>
+</nav>
+
+<section id="home" class="page">
+<div class="card">
+<h2>Welcome to Gatesh 👋</h2>
+<p class="muted">Manage your phone sales, instalments and customer payments in one place.</p>
+</div>
+<div class="card">
+<h2>Recent customers</h2>
+<div id="recent" class="muted">No customers added yet.</div>
+</div>
+</section>
+
+<section id="add" class="page hidden">
+<div class="card">
+<h2>Register a customer</h2>
+<form id="customerForm">
+<label>Customer full name</label>
+<input id="name" required placeholder="Enter customer name">
+<label>Phone number</label>
+<input id="phone" required type="tel" placeholder="07XXXXXXXX">
+<label>Phone model</label>
+<input id="model" required placeholder="e.g. Tecno Spark 20">
+<label>Total phone price (KSh)</label>
+<input id="price" required type="number" min="1" placeholder="25000">
+<label>Deposit paid (KSh)</label>
+<input id="deposit" required type="number" min="0" value="0">
+<label>Instalment amount (KSh)</label>
+<input id="installment" required type="number" min="1" placeholder="2500">
+<label>Payment frequency</label>
+<select id="frequency">
+<option>Weekly</option>
+<option>Biweekly</option>
+<option>Monthly</option>
+</select>
+<label>Next payment due date</label>
+<input id="due" required type="date">
+<button class="primary" type="submit">Save customer</button>
+</form>
+</div>
+</section>
+
+<section id="list" class="page hidden">
+<div class="card">
+<h2>Customer records</h2>
+<input id="search" placeholder="Search customer or phone..." oninput="render()">
+<div id="customersList"></div>
+</div>
+</section>
+
+<section id="detail" class="page hidden">
+<div class="card">
+<button class="secondary" onclick="show('list')">← Back to customers</button>
+<div id="details"></div>
+</div>
+</section>
+
+<footer>Gatesh v1.0 • Your instalment business assistant</footer>
+</main>
+
+<script>
+let records=JSON.parse(localStorage.getItem('gatesh_customers')||'[]');
+let selected=null;
+const money=n=>'KSh '+Number(n||0).toLocaleString('en-KE');
+const save=()=>localStorage.setItem('gatesh_customers',JSON.stringify(records));
+
+function show(id,btn){
+document.querySelectorAll('.page').forEach(p=>p.classList.add('hidden'));
+document.getElementById(id).classList.remove('hidden');
+document.querySelectorAll('nav button').forEach(b=>b.classList.remove('active'));
+if(btn)btn.classList.add('active');
+if(id==='list')render();
+if(id==='home')dashboard();
+}
+
+function dashboard(){
+let collected=records.reduce((s,c)=>s+c.payments.reduce((a,p)=>a+p.amount,0)+c.deposit,0);
+let balance=records.reduce((s,c)=>s+Math.max(0,c.price-c.deposit-c.payments.reduce((a,p)=>a+p.amount,0)),0);
+let overdue=records.filter(c=>balanceOf(c)>0&&c.due<new Date().toISOString().slice(0,10)).length;
+document.getElementById('customers').textContent=records.length;
+document.getElementById('collected').textContent=money(collected);
+document.getElementById('balance').textContent=money(balance);
+document.getElementById('overdue').textContent=overdue;
+document.getElementById('recent').innerHTML=records.length?records.slice(-4).reverse().map(c=>'<div class="customer"><strong>'+esc(c.name)+'</strong><p>'+esc(c.model)+' • '+money(balanceOf(c))+' remaining</p></div>').join(''):'No customers added yet.';
+}
+
+function balanceOf(c){
+return Math.max(0,c.price-c.deposit-c.payments.reduce((s,p)=>s+p.amount,0));
+}
+
+function esc(s){
+return String(s).replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
+}
+
+document.getElementById('customerForm').addEventListener('submit',e=>{
+e.preventDefault();
+let price=Number(document.getElementById('price').value);
+let deposit=Number(document.getElementById('deposit').value);
+if(deposit>price){alert('Deposit cannot exceed the phone price.');return;}
+records.push({
+id:Date.now(),
+name:document.getElementById('name').value.trim(),
+phone:document.getElementById('phone').value.trim(),
+model:document.getElementById('model').value.trim(),
+price,deposit,
+installment:Number(document.getElementById('installment').value),
+frequency:document.getElementById('frequency').value,
+due:document.getElementById('due').value,
+payments:[]
+});
+save();e.target.reset();
+show('list');
+dashboard();
+alert('Customer saved successfully!');
+});
+
+function render(){
+let q=(document.getElementById('search')?.value||'').toLowerCase();
+let found=records.filter(c=>(c.name+' '+c.phone+' '+c.model).toLowerCase().includes(q));
+document.getElementById('customersList').innerHTML=found.length?found.map(c=>
+'<div class="customer"><strong>'+esc(c.name)+'</strong> <span class="badge '+(balanceOf(c)===0?'paid':'')+'">'+(balanceOf(c)===0?'PAID':'ACTIVE')+'</span><p>'+esc(c.model)+' • '+esc(c.phone)+'</p><p>Balance: <span class="money">'+money(balanceOf(c))+'</span></p><button class="secondary" onclick="openCustomer('+c.id+')">View account</button></div>'
+).join(''):'<p class="muted">No matching customers.</p>';
+}
+
+function openCustomer(id){
+selected=records.find(c=>c.id===id);
+if(!selected)return;
+let c=selected;
+let paid=c.payments.reduce((s,p)=>s+p.amount,0)+c.deposit;
+document.getElementById('details').innerHTML=
+'<h2>'+esc(c.name)+'</h2><p class="muted">'+esc(c.phone)+' • '+esc(c.model)+'</p><hr>'+
+'<p>Total price: <b>'+money(c.price)+'</b></p>'+
+'<p>Amount paid: <b class="green">'+money(paid)+'</b></p>'+
+'<p>Outstanding: <b class="orange">'+money(balanceOf(c))+'</b></p>'+
+'<p>Instalment: '+money(c.installment)+' / '+esc(c.frequency)+'</p>'+
+'<p>Next due: '+esc(c.due)+'</p><hr>'+
+'<h2>Record payment</h2>'+
+'<label>Payment amount (KSh)</label><input id="paymentAmount" type="number" min="1" max="'+balanceOf(c)+'" placeholder="Enter amount">'+
+'<button class="primary" onclick="pay()">Save payment</button>'+
+'<h2 style="margin-top:22px">Payment history</h2>'+
+(c.payments.length?c.payments.slice().reverse().map(p=>'<p>'+esc(p.date)+' — <b>'+money(p.amount)+'</b></p>').join(''):'<p class="muted">No instalments recorded yet.</p>');
+show('detail');
+}
+
+function pay(){
+let amount=Number(document.getElementById('paymentAmount').value);
+if(!amount||amount<=0||amount>balanceOf(selected)){alert('Enter a valid amount not exceeding the balance.');return;}
+selected.payments.push({amount,date:new Date().toISOString().slice(0,10)});
+save();
+openCustomer(selected.id);
+dashboard();
+alert('Payment recorded successfully!');
+}
+
+dashboard();
+</script>
+</body>
+  </html>
+
+  
