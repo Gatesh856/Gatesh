@@ -5,421 +5,258 @@ HTML
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Gatesh - Phone Manager</title>
+<meta name="theme-color" content="#101827">
+<title>Gatesh Phone Manager</title>
 <style>
 *{box-sizing:border-box}
-body{margin:0;font-family:Arial,sans-serif;background:#f1f5f9;color:#172033}
-header{background:#102b50;color:white;padding:25px 18px;border-radius:0 0 22px 22px}
-header h1{margin:0;font-size:27px}
-header p{color:#cbd5e1}
-.container{padding:16px;max-width:600px;margin:auto}
-.card{background:white;padding:18px;border-radius:15px;margin-bottom:15px;box-shadow:0 3px 12px #0000000b}
-.stats{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.stat{background:#e8f1ff;padding:15px;border-radius:12px}
-.stat small{color:#53657b}HTML
-
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Gatesh - Phone Manager</title>
-<style>
-*{box-sizing:border-box}
-body{margin:0;font-family:Arial,sans-serif;background:#f1f5f9;color:#172033}
-header{background:#102b50;color:white;padding:25px 18px;border-radius:0 0 22px 22px}
-header h1{margin:0;font-size:27px}
-header p{color:#cbd5e1}
-.container{padding:16px;max-width:600px;margin:auto}
-.card{background:white;padding:18px;border-radius:15px;margin-bottom:15px;box-shadow:0 3px 12px #0000000b}
-.stats{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.stat{background:#e8f1ff;padding:15px;border-radius:12px}
-.stat small{color:#53657b}
-.stat h2{margin:8px 0;color:#124b87;font-size:21px}
-h3{margin-top:0}
-input,button{width:100%;padding:13px;margin:7px 0;border-radius:9px;font-size:15px}
-input{border:1px solid #cbd5e1}
-button{border:0;background:#1261a0;color:white;font-weight:bold}
+body{margin:0;background:#101827;color:#f1f5f9;font-family:Arial,sans-serif}
+header{background:#172438;padding:22px 18px;border-bottom:1px solid #304057}
+header h1{margin:0;color:#38d9a9;font-size:27px}
+header p{color:#9aabc0;margin:7px 0 0}
+main{max-width:850px;margin:auto;padding:16px}
+.card{background:#1b293d;border:1px solid #304057;border-radius:14px;padding:17px;margin-bottom:16px}
+h2{font-size:18px;margin:0 0 15px}
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.stat{background:#263750;padding:14px;border-radius:10px}
+.stat small{color:#a9bbd0}
+.stat strong{display:block;color:#38d9a9;font-size:20px;margin-top:8px}
+input,button{font:inherit}
+input{width:100%;padding:12px;background:#101c2c;color:white;border:1px solid #40536b;border-radius:8px;margin:6px 0 12px}
+label{font-size:13px;color:#bdcadd}
+button{border:0;border-radius:8px;padding:12px 15px;background:#38d9a9;color:#102438;font-weight:bold;cursor:pointer}
+button.secondary{background:#34465e;color:white}
+button.danger{background:#a83e4b;color:white}
 button:active{opacity:.8}
-.pay{background:#168451}
-.delete{background:#bd3545}
-.plan{border:1px solid #e2e8f0;padding:14px;border-radius:12px;margin:12px 0}
-.progress{height:9px;background:#e2e8f0;border-radius:10px;overflow:hidden}
-.bar{height:100%;background:#168451}
-.muted{color:#64748b;font-size:13px}
+.full{width:100%}
+.customer{background:#263750;padding:14px;border-radius:10px;margin:10px 0}
+.customer h3{margin:0 0 7px;color:#38d9a9}
+.customer p{font-size:13px;color:#c1ccda;margin:6px 0}
+.actions{display:flex;flex-wrap:wrap;gap:7px;margin-top:12px}
+.actions button{font-size:12px;padding:9px}
+.progress{height:8px;background:#101827;border-radius:10px;margin:10px 0;overflow:hidden}
+.progress div{height:100%;background:#38d9a9}
+.hidden{display:none}
+.muted{color:#9aabc0;font-size:13px}
+footer{text-align:center;padding:20px;color:#8293a9;font-size:12px}
 </style>
 </head>
 <body>
-
 <header>
 <h1>GATESH</h1>
-<p>My Phone Instalment Manager</p>
+<p>Phone Instalment Management System</p>
 </header>
-
-<div class="container">
-
+<main>
+<section class="card">
+<h2>Business Dashboard</h2>
 <div class="stats">
-<div class="stat">
-<small>Total Phone Cost</small>
-<h2 id="total">KSh 0</h2>
+<div class="stat"><small>Total Customers</small><strong id="customers">0</strong></div>
+<div class="stat"><small>Total Sales</small><strong id="sales">KSh 0</strong></div>
+<div class="stat"><small>Money Collected</small><strong id="collected">KSh 0</strong></div>
+<div class="stat"><small>Outstanding</small><strong id="outstanding">KSh 0</strong></div>
 </div>
-<div class="stat">
-<small>Total Paid</small>
-<h2 id="paid">KSh 0</h2>
-</div>
-<div class="stat">
-<small>Remaining Balance</small>
-<h2 id="balance">KSh 0</h2>
-</div>
-<div class="stat">
-<small>Active Plans</small>
-<h2 id="count">0</h2>
-</div>
-</div>
+</section>
 
-<div class="card">
-<h3>+ Add Phone Instalment</h3>
-<input id="phone" placeholder="Phone name/model">
-<input id="price" type="number" min="1" placeholder="Total phone price (KSh)">
-<input id="deposit" type="number" min="0" placeholder="Deposit already paid (KSh)">
-<input id="monthly" type="number" min="1" placeholder="Monthly instalment (KSh)">
-<label>Next payment date</label>
-<input id="date" type="date">
-<button onclick="addPlan()">Add Phone Plan</button>
-</div>
+<section class="card">
+<h2>Register New Customer</h2>
+<form id="customerForm">
+<label>Customer Full Name</label>
+<input id="name" required placeholder="Customer name">
+<label>Phone Number</label>
+<input id="phone" required type="tel" placeholder="07XXXXXXXX">
+<label>Phone Model</label>
+<input id="model" required placeholder="e.g. Samsung A15">
+<label>Phone Selling Price (KSh)</label>
+<input id="price" required type="number" min="1" placeholder="25000">
+<label>Deposit Paid (KSh)</label>
+<input id="deposit" required type="number" min="0" placeholder="5000">
+<label>Monthly Instalment (KSh)</label>
+<input id="monthly" required type="number" min="1" placeholder="2000">
+<label>Number of Months</label>
+<input id="months" required type="number" min="1" placeholder="10">
+<button class="full" type="submit">+ Register Customer</button>
+</form>
+</section>
 
-<div class="card">
-<h3>My Phone Plans</h3>
-<div id="plans"></div>
-</div>
+<section class="card">
+<h2>Customer Records</h2>
+<input id="search" placeholder="Search customer or phone model...">
+<div id="records"></div>
+</section>
 
-<div class="card">
-<h3>Payment History</h3>
-<div id="history"></div>
-</div>
-
-</div>
+<section class="card">
+<h2>Backup & Data</h2>
+<p class="muted">Save a backup of your customer and payment records.</p>
+<button class="full" onclick="backup()">Download Backup</button>
+<p class="muted" style="margin-top:14px">Restore a previous backup:</p>
+<input type="file" id="restoreFile" accept=".json">
+<button class="secondary full" onclick="restore()">Restore Backup</button>
+</section>
+</main>
+<footer>GATESH © 2026 · Phone Instalment Manager</footer>
 
 <script>
-let plans=JSON.parse(localStorage.getItem("gateshPlans")||"[]");
-let history=JSON.parse(localStorage.getItem("gateshHistory")||"[]");
+let customers = JSON.parse(localStorage.getItem("gateshCustomers") || "[]");
+
+function save(){
+localStorage.setItem("gateshCustomers",JSON.stringify(customers));
+render();
+}
 
 function money(n){
 return "KSh "+Number(n).toLocaleString("en-KE");
 }
 
-function save(){
-localStorage.setItem("gateshPlans",JSON.stringify(plans));
-localStorage.setItem("gateshHistory",JSON.stringify(history));
-render();
+function totalPaid(c){
+return Number(c.deposit)+c.payments.reduce((s,p)=>s+Number(p.amount),0);
 }
 
-function addPlan(){
-let phone=document.getElementById("phone").value.trim();
-let price=Number(document.getElementById("price").value);
-let deposit=Number(document.getElementById("deposit").value||0);
-let monthly=Number(document.getElementById("monthly").value);
-let date=document.getElementById("date").value;
+function balance(c){
+return Math.max(0,Number(c.price)-totalPaid(c));
+}
 
-if(!phone||price<=0||monthly<=0||deposit<0||deposit>price){
-alert("Please enter valid phone details.");
+function render(){
+document.getElementById("customers").textContent=customers.length;
+document.getElementById("sales").textContent=money(customers.reduce((s,c)=>s+Number(c.price),0));
+document.getElementById("collected").textContent=money(customers.reduce((s,c)=>s+totalPaid(c),0));
+document.getElementById("outstanding").textContent=money(customers.reduce((s,c)=>s+balance(c),0));
+
+let query=document.getElementById("search").value.toLowerCase();
+let list=customers.filter(c=>(c.name+" "+c.phone+" "+c.model).toLowerCase().includes(query));
+let area=document.getElementById("records");
+
+if(!list.length){
+area.innerHTML='<p class="muted">No customer records found.</p>';
 return;
 }
 
-plans.push({
-id:Date.now(),
-phone,price,paid:deposit,monthly,date
-});
+area.innerHTML=list.map(c=>{
+let paid=totalPaid(c);
+let remaining=balance(c);
+let percent=Math.min(100,paid/Number(c.price)*100);
+let history=c.payments.length
+?c.payments.map(p=>`<p>• ${money(p.amount)} — ${p.date}</p>`).join("")
+:"<p>No instalment payments recorded.</p>";
 
-document.getElementById("phone").value="";
-document.getElementById("price").value="";
-document.getElementById("deposit").value="";
-document.getElementById("monthly").value="";
-document.getElementById("date").value="";
+return `<div class="customer">
+<h3>${escapeHTML(c.name)}</h3>
+<p>Phone: ${escapeHTML(c.phone)}</p>
+<p>Model: ${escapeHTML(c.model)}</p>
+<p>Price: ${money(c.price)}</p>
+<p>Paid so far: ${money(paid)}</p>
+<p><b>Balance: ${money(remaining)}</b></p>
+<div class="progress"><div style="width:${percent}%"></div></div>
+<p>${percent.toFixed(1)}% paid</p>
+<p>Monthly instalment: ${money(c.monthly)}</p>
+<details><summary>Payment history (${c.payments.length})</summary>${history}</details>
+<div class="actions">
+<button onclick="recordPayment('${c.id}')">Record Payment</button>
+<button class="secondary" onclick="showDetails('${c.id}')">Details</button>
+<button class="danger" onclick="deleteCustomer('${c.id}')">Delete</button>
+</div></div>`;
+}).join("");
+}
+
+function escapeHTML(value){
+return String(value).replace(/[&<>"']/g,ch=>({
+"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+})[ch]);
+}
+
+document.getElementById("customerForm").addEventListener("submit",function(e){
+e.preventDefault();
+let price=Number(document.getElementById("price").value);
+let deposit=Number(document.getElementById("deposit").value);
+let monthly=Number(document.getElementById("monthly").value);
+let months=Number(document.getElementById("months").value);
+
+if(deposit>price){
+alert("Deposit cannot exceed the phone price.");
+return;
+}
+
+if(monthly*months<price-deposit){
+alert("Monthly instalments do not cover the remaining balance. Increase the amount or months.");
+return;
+}
+
+customers.push({
+id:Date.now().toString(),
+name:document.getElementById("name").value.trim(),
+phone:document.getElementById("phone").value.trim(),
+model:document.getElementById("model").value.trim(),
+price,deposit,monthly,months,
+payments:[]
+});
 
 save();
-alert("Phone plan added successfully!");
-}
-
-function makePayment(id){
-let plan=plans.find(p=>p.id===id);
-let amount=prompt("Enter payment amount in KSh:");
-
-if(amount===null)return;
-
-amount=Number(amount);
-
-if(!Number.isFinite(amount)||amount<=0){
-alert("Enter a valid amount.");
-return;
-}
-
-if(amount>plan.price-plan.paid){
-alert("Payment is greater than the remaining balance.");
-return;
-}
-
-plan.paid+=amount;
-
-history.unshift({
-phone:plan.phone,
-amount,
-date:new Date().toLocaleDateString()
+this.reset();
+alert("Customer registered successfully!");
 });
 
+function recordPayment(id){
+let c=customers.find(x=>x.id===id);
+if(!c)return;
+let amount=Number(prompt("Enter payment amount in KSh:"));
+if(!Number.isFinite(amount)||amount<=0)return;
+if(amount>balance(c)){
+alert("Payment exceeds outstanding balance.");
+return;
+}
+c.payments.push({
+amount,
+date:new Date().toLocaleDateString("en-KE")
+});
 save();
 alert("Payment recorded successfully!");
 }
 
-function deletePlan(id){
-if(!confirm("Delete this phone plan?"))return;
-plans=plans.filter(p=>p.id!==id);
+function showDetails(id){
+let c=customers.find(x=>x.id===id);
+if(!c)return;
+alert("Customer: "+c.name+
+"\nPhone: "+c.phone+
+"\nModel: "+c.model+
+"\nPrice: "+money(c.price)+
+"\nDeposit: "+money(c.deposit)+
+"\nTotal paid: "+money(totalPaid(c))+
+"\nBalance: "+money(balance(c))+
+"\nMonthly: "+money(c.monthly)+
+"\nMonths: "+c.months);
+}
+
+function deleteCustomer(id){
+if(!confirm("Delete this customer and all their payment history?"))return;
+customers=customers.filter(c=>c.id!==id);
 save();
 }
 
-function render(){
-let total=plans.reduce((s,p)=>s+p.price,0);
-let paid=plans.reduce((s,p)=>s+p.paid,0);
-let balance=total-paid;
+document.getElementById("search").addEventListener("input",render);
 
-document.getElementById("total").textContent=money(total);
-document.getElementById("paid").textContent=money(paid);
-document.getElementById("balance").textContent=money(balance);
-document.getElementById("count").textContent=plans.filter(p=>p.paid<p.price).length;
-
-let output=document.getElementById("plans");
-
-if(!plans.length){
-output.innerHTML="<p class='muted'>No phone plans added yet.</p>";
-}else{
-output.innerHTML=plans.map(p=>{
-let remaining=p.price-p.paid;
-let percent=Math.min(100,(p.paid/p.price)*100);
-
-return `
-<div class="plan">
-<h3>${escapeHTML(p.phone)}</h3>
-<p>Total: <b>${money(p.price)}</b></p>
-<p>Paid: ${money(p.paid)}</p>
-<p>Remaining: <b>${money(remaining)}</b></p>
-<p>Monthly instalment: ${money(p.monthly)}</p>
-<p>Next payment: ${p.date||"Not set"}</p>
-<div class="progress">
-<div class="bar" style="width:${percent}%"></div>
-</div>
-<p class="muted">${percent.toFixed(1)}% paid</p>
-${remaining>0?`<button class="pay" onclick="makePayment(${p.id})">Record Payment</button>`:"<p><b>FULLY PAID ✓</b></p>"}
-<button class="delete" onclick="deletePlan(${p.id})">Delete Plan</button>
-</div>`;
-}).join("");
+function backup(){
+let blob=new Blob([JSON.stringify(customers,null,2)],{type:"application/json"});
+let url=URL.createObjectURL(blob);
+let a=document.createElement("a");
+a.href=url;
+a.download="Gatesh-Backup.json";
+a.click();
+URL.revokeObjectURL(url);
 }
 
-document.getElementById("history").innerHTML=
-history.length?history.map(h=>
-`<p>${escapeHTML(h.phone)} — <b>${money(h.amount)}</b><br><small>${h.date}</small></p>`
-).join(""):"<p class='muted'>No payments recorded yet.</p>";
-}
-
-function escapeHTML(value){
-return String(value).replace(/[&<>"']/g,c=>({
-"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
-}[c]));
-}
-
-render();
-</script>
-</body>
-</html>
-
-.stat h2{margin:8px 0;color:#124b87;font-size:21px}
-h3{margin-top:0}
-input,button{width:100%;padding:13px;margin:7px 0;border-radius:9px;font-size:15px}
-input{border:1px solid #cbd5e1}
-button{border:0;background:#1261a0;color:white;font-weight:bold}
-button:active{opacity:.8}
-.pay{background:#168451}
-.delete{background:#bd3545}
-.plan{border:1px solid #e2e8f0;padding:14px;border-radius:12px;margin:12px 0}
-.progress{height:9px;background:#e2e8f0;border-radius:10px;overflow:hidden}
-.bar{height:100%;background:#168451}
-.muted{color:#64748b;font-size:13px}
-</style>
-</head>
-<body>
-
-<header>
-<h1>GATESH</h1>
-<p>My Phone Instalment Manager</p>
-</header>
-
-<div class="container">
-
-<div class="stats">
-<div class="stat">
-<small>Total Phone Cost</small>
-<h2 id="total">KSh 0</h2>
-</div>
-<div class="stat">
-<small>Total Paid</small>
-<h2 id="paid">KSh 0</h2>
-</div>
-<div class="stat">
-<small>Remaining Balance</small>
-<h2 id="balance">KSh 0</h2>
-</div>
-<div class="stat">
-<small>Active Plans</small>
-<h2 id="count">0</h2>
-</div>
-</div>
-
-<div class="card">
-<h3>+ Add Phone Instalment</h3>
-<input id="phone" placeholder="Phone name/model">
-<input id="price" type="number" min="1" placeholder="Total phone price (KSh)">
-<input id="deposit" type="number" min="0" placeholder="Deposit already paid (KSh)">
-<input id="monthly" type="number" min="1" placeholder="Monthly instalment (KSh)">
-<label>Next payment date</label>
-<input id="date" type="date">
-<button onclick="addPlan()">Add Phone Plan</button>
-</div>
-
-<div class="card">
-<h3>My Phone Plans</h3>
-<div id="plans"></div>
-</div>
-
-<div class="card">
-<h3>Payment History</h3>
-<div id="history"></div>
-</div>
-
-</div>
-
-<script>
-let plans=JSON.parse(localStorage.getItem("gateshPlans")||"[]");
-let history=JSON.parse(localStorage.getItem("gateshHistory")||"[]");
-
-function money(n){
-return "KSh "+Number(n).toLocaleString("en-KE");
-}
-
-function save(){
-localStorage.setItem("gateshPlans",JSON.stringify(plans));
-localStorage.setItem("gateshHistory",JSON.stringify(history));
-render();
-}
-
-function addPlan(){
-let phone=document.getElementById("phone").value.trim();
-let price=Number(document.getElementById("price").value);
-let deposit=Number(document.getElementById("deposit").value||0);
-let monthly=Number(document.getElementById("monthly").value);
-let date=document.getElementById("date").value;
-
-if(!phone||price<=0||monthly<=0||deposit<0||deposit>price){
-alert("Please enter valid phone details.");
-return;
-}
-
-plans.push({
-id:Date.now(),
-phone,price,paid:deposit,monthly,date
-});
-
-document.getElementById("phone").value="";
-document.getElementById("price").value="";
-document.getElementById("deposit").value="";
-document.getElementById("monthly").value="";
-document.getElementById("date").value="";
-
+function restore(){
+let file=document.getElementById("restoreFile").files[0];
+if(!file){alert("Choose a backup file first.");return;}
+let reader=new FileReader();
+reader.onload=function(){
+try{
+let data=JSON.parse(reader.result);
+if(!Array.isArray(data))throw new Error();
+if(!confirm("Replace your current records with this backup?"))return;
+customers=data;
 save();
-alert("Phone plan added successfully!");
-}
-
-function makePayment(id){
-let plan=plans.find(p=>p.id===id);
-let amount=prompt("Enter payment amount in KSh:");
-
-if(amount===null)return;
-
-amount=Number(amount);
-
-if(!Number.isFinite(amount)||amount<=0){
-alert("Enter a valid amount.");
-return;
-}
-
-if(amount>plan.price-plan.paid){
-alert("Payment is greater than the remaining balance.");
-return;
-}
-
-plan.paid+=amount;
-
-history.unshift({
-phone:plan.phone,
-amount,
-date:new Date().toLocaleDateString()
-});
-
-save();
-alert("Payment recorded successfully!");
-}
-
-function deletePlan(id){
-if(!confirm("Delete this phone plan?"))return;
-plans=plans.filter(p=>p.id!==id);
-save();
-}
-
-function render(){
-let total=plans.reduce((s,p)=>s+p.price,0);
-let paid=plans.reduce((s,p)=>s+p.paid,0);
-let balance=total-paid;
-
-document.getElementById("total").textContent=money(total);
-document.getElementById("paid").textContent=money(paid);
-document.getElementById("balance").textContent=money(balance);
-document.getElementById("count").textContent=plans.filter(p=>p.paid<p.price).length;
-
-let output=document.getElementById("plans");
-
-if(!plans.length){
-output.innerHTML="<p class='muted'>No phone plans added yet.</p>";
-}else{
-output.innerHTML=plans.map(p=>{
-let remaining=p.price-p.paid;
-let percent=Math.min(100,(p.paid/p.price)*100);
-
-return `
-<div class="plan">
-<h3>${escapeHTML(p.phone)}</h3>
-<p>Total: <b>${money(p.price)}</b></p>
-<p>Paid: ${money(p.paid)}</p>
-<p>Remaining: <b>${money(remaining)}</b></p>
-<p>Monthly instalment: ${money(p.monthly)}</p>
-<p>Next payment: ${p.date||"Not set"}</p>
-<div class="progress">
-<div class="bar" style="width:${percent}%"></div>
-</div>
-<p class="muted">${percent.toFixed(1)}% paid</p>
-${remaining>0?`<button class="pay" onclick="makePayment(${p.id})">Record Payment</button>`:"<p><b>FULLY PAID ✓</b></p>"}
-<button class="delete" onclick="deletePlan(${p.id})">Delete Plan</button>
-</div>`;
-}).join("");
-}
-
-document.getElementById("history").innerHTML=
-history.length?history.map(h=>
-`<p>${escapeHTML(h.phone)} — <b>${money(h.amount)}</b><br><small>${h.date}</small></p>`
-).join(""):"<p class='muted'>No payments recorded yet.</p>";
-}
-
-function escapeHTML(value){
-return String(value).replace(/[&<>"']/g,c=>({
-"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
-}[c]));
+alert("Backup restored!");
+}catch(e){alert("Invalid backup file.");}
+};
+reader.readAsText(file);
 }
 
 render();
