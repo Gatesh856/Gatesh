@@ -5,115 +5,423 @@ HTML
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Gatesh</title>
+<title>Gatesh - Phone Manager</title>
 <style>
 *{box-sizing:border-box}
-body{margin:0;font-family:Arial;background:#f3f5f9;color:#172033}
-header{background:#102b46;color:white;padding:25px 20px;border-radius:0 0 25px 25px}
-header h1{margin:0;font-size:28px}
-header p{color:#b9d1e5}
-main{padding:18px}
-.card{background:white;padding:18px;border-radius:16px;margin-bottom:15px;box-shadow:0 3px 12px #0000000c}
-.balance{background:#087c68;color:white}
-.balance h2{font-size:30px;margin:10px 0}
-label{display:block;margin:12px 0 6px}
-input{width:100%;padding:13px;border:1px solid #ddd;border-radius:9px;font-size:16px}
-button{background:#087c68;color:white;border:0;padding:13px;border-radius:9px;width:100%;font-size:16px;margin-top:12px}
-.item{border-bottom:1px solid #eee;padding:12px 0}
-.small{color:#64748b;font-size:13px}
+body{margin:0;font-family:Arial,sans-serif;background:#f1f5f9;color:#172033}
+header{background:#102b50;color:white;padding:25px 18px;border-radius:0 0 22px 22px}
+header h1{margin:0;font-size:27px}
+header p{color:#cbd5e1}
+.container{padding:16px;max-width:600px;margin:auto}
+.card{background:white;padding:18px;border-radius:15px;margin-bottom:15px;box-shadow:0 3px 12px #0000000b}
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.stat{background:#e8f1ff;padding:15px;border-radius:12px}
+.stat small{color:#53657b}HTML
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gatesh - Phone Manager</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,sans-serif;background:#f1f5f9;color:#172033}
+header{background:#102b50;color:white;padding:25px 18px;border-radius:0 0 22px 22px}
+header h1{margin:0;font-size:27px}
+header p{color:#cbd5e1}
+.container{padding:16px;max-width:600px;margin:auto}
+.card{background:white;padding:18px;border-radius:15px;margin-bottom:15px;box-shadow:0 3px 12px #0000000b}
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.stat{background:#e8f1ff;padding:15px;border-radius:12px}
+.stat small{color:#53657b}
+.stat h2{margin:8px 0;color:#124b87;font-size:21px}
+h3{margin-top:0}
+input,button{width:100%;padding:13px;margin:7px 0;border-radius:9px;font-size:15px}
+input{border:1px solid #cbd5e1}
+button{border:0;background:#1261a0;color:white;font-weight:bold}
+button:active{opacity:.8}
+.pay{background:#168451}
+.delete{background:#bd3545}
+.plan{border:1px solid #e2e8f0;padding:14px;border-radius:12px;margin:12px 0}
+.progress{height:9px;background:#e2e8f0;border-radius:10px;overflow:hidden}
+.bar{height:100%;background:#168451}
+.muted{color:#64748b;font-size:13px}
 </style>
 </head>
 <body>
+
 <header>
-<h1>Gatesh</h1>
-<p>Your phone instalment manager</p>
+<h1>GATESH</h1>
+<p>My Phone Instalment Manager</p>
 </header>
-<main>
-<div class="card balance">
-<div>Total outstanding balance</div>
+
+<div class="container">
+
+<div class="stats">
+<div class="stat">
+<small>Total Phone Cost</small>
+<h2 id="total">KSh 0</h2>
+</div>
+<div class="stat">
+<small>Total Paid</small>
+<h2 id="paid">KSh 0</h2>
+</div>
+<div class="stat">
+<small>Remaining Balance</small>
 <h2 id="balance">KSh 0</h2>
-<div id="count">0 active plans</div>
+</div>
+<div class="stat">
+<small>Active Plans</small>
+<h2 id="count">0</h2>
+</div>
 </div>
 
 <div class="card">
-<h3>Add a phone instalment</h3>
-<label>Phone name</label>
-<input id="phone" placeholder="e.g. Tecno Spark">
-<label>Total phone price (KSh)</label>
-<input id="price" type="number" placeholder="15000">
-<label>Deposit paid (KSh)</label>
-<input id="deposit" type="number" placeholder="3000">
-<label>Monthly payment (KSh)</label>
-<input id="monthly" type="number" placeholder="2000">
-<label>Number of months</label>
-<input id="months" type="number" placeholder="6">
-<button onclick="addPlan()">Save instalment</button>
+<h3>+ Add Phone Instalment</h3>
+<input id="phone" placeholder="Phone name/model">
+<input id="price" type="number" min="1" placeholder="Total phone price (KSh)">
+<input id="deposit" type="number" min="0" placeholder="Deposit already paid (KSh)">
+<input id="monthly" type="number" min="1" placeholder="Monthly instalment (KSh)">
+<label>Next payment date</label>
+<input id="date" type="date">
+<button onclick="addPlan()">Add Phone Plan</button>
 </div>
 
 <div class="card">
-<h3>My instalments</h3>
-<div id="plans">No instalments added yet.</div>
+<h3>My Phone Plans</h3>
+<div id="plans"></div>
 </div>
-</main>
+
+<div class="card">
+<h3>Payment History</h3>
+<div id="history"></div>
+</div>
+
+</div>
+
 <script>
 let plans=JSON.parse(localStorage.getItem("gateshPlans")||"[]");
+let history=JSON.parse(localStorage.getItem("gateshHistory")||"[]");
 
 function money(n){
 return "KSh "+Number(n).toLocaleString("en-KE");
 }
+
 function save(){
 localStorage.setItem("gateshPlans",JSON.stringify(plans));
+localStorage.setItem("gateshHistory",JSON.stringify(history));
 render();
 }
+
 function addPlan(){
 let phone=document.getElementById("phone").value.trim();
 let price=Number(document.getElementById("price").value);
-let deposit=Number(document.getElementById("deposit").value);
+let deposit=Number(document.getElementById("deposit").value||0);
 let monthly=Number(document.getElementById("monthly").value);
-let months=Number(document.getElementById("months").value);
+let date=document.getElementById("date").value;
 
-if(!phone||price<=0||deposit<0||monthly<=0||months<=0||deposit>price){
-alert("Please enter valid instalment details.");
+if(!phone||price<=0||monthly<=0||deposit<0||deposit>price){
+alert("Please enter valid phone details.");
 return;
 }
-plans.push({phone,price,deposit,monthly,months,paid:deposit});
-save();
+
+plans.push({
+id:Date.now(),
+phone,price,paid:deposit,monthly,date
+});
+
 document.getElementById("phone").value="";
 document.getElementById("price").value="";
 document.getElementById("deposit").value="";
 document.getElementById("monthly").value="";
-document.getElementById("months").value="";
+document.getElementById("date").value="";
+
+save();
+alert("Phone plan added successfully!");
 }
-function payment(i){
-let amount=Number(prompt("Enter payment amount in KSh:"));
-if(!Number.isFinite(amount)||amount<=0)return;
-let p=plans[i];
-p.paid=Math.min(p.price,p.paid+amount);
+
+function makePayment(id){
+let plan=plans.find(p=>p.id===id);
+let amount=prompt("Enter payment amount in KSh:");
+
+if(amount===null)return;
+
+amount=Number(amount);
+
+if(!Number.isFinite(amount)||amount<=0){
+alert("Enter a valid amount.");
+return;
+}
+
+if(amount>plan.price-plan.paid){
+alert("Payment is greater than the remaining balance.");
+return;
+}
+
+plan.paid+=amount;
+
+history.unshift({
+phone:plan.phone,
+amount,
+date:new Date().toLocaleDateString()
+});
+
+save();
+alert("Payment recorded successfully!");
+}
+
+function deletePlan(id){
+if(!confirm("Delete this phone plan?"))return;
+plans=plans.filter(p=>p.id!==id);
 save();
 }
+
 function render(){
-let balance=0;
-plans.forEach(p=>balance+=Math.max(0,p.price-p.paid));
+let total=plans.reduce((s,p)=>s+p.price,0);
+let paid=plans.reduce((s,p)=>s+p.paid,0);
+let balance=total-paid;
+
+document.getElementById("total").textContent=money(total);
+document.getElementById("paid").textContent=money(paid);
 document.getElementById("balance").textContent=money(balance);
-document.getElementById("count").textContent=plans.filter(p=>p.paid<p.price).length+" active plans";
-let html="";
-plans.forEach((p,i)=>{
-let remaining=Math.max(0,p.price-p.paid);
-let progress=Math.min(100,p.paid/p.price*100);
-html+=`<div class="item">
-<strong>${p.phone}</strong>
-<p class="small">Price: ${money(p.price)}</p>
+document.getElementById("count").textContent=plans.filter(p=>p.paid<p.price).length;
+
+let output=document.getElementById("plans");
+
+if(!plans.length){
+output.innerHTML="<p class='muted'>No phone plans added yet.</p>";
+}else{
+output.innerHTML=plans.map(p=>{
+let remaining=p.price-p.paid;
+let percent=Math.min(100,(p.paid/p.price)*100);
+
+return `
+<div class="plan">
+<h3>${escapeHTML(p.phone)}</h3>
+<p>Total: <b>${money(p.price)}</b></p>
 <p>Paid: ${money(p.paid)}</p>
-<p>Remaining: <strong>${money(remaining)}</strong></p>
-<div style="background:#e5e7eb;height:8px;border-radius:9px">
-<div style="background:#087c68;width:${progress}%;height:8px;border-radius:9px"></div>
+<p>Remaining: <b>${money(remaining)}</b></p>
+<p>Monthly instalment: ${money(p.monthly)}</p>
+<p>Next payment: ${p.date||"Not set"}</p>
+<div class="progress">
+<div class="bar" style="width:${percent}%"></div>
 </div>
-<p class="small">${progress.toFixed(0)}% paid</p>
-<button onclick="payment(${i})">Record payment</button>
+<p class="muted">${percent.toFixed(1)}% paid</p>
+${remaining>0?`<button class="pay" onclick="makePayment(${p.id})">Record Payment</button>`:"<p><b>FULLY PAID ✓</b></p>"}
+<button class="delete" onclick="deletePlan(${p.id})">Delete Plan</button>
 </div>`;
-});
-document.getElementById("plans").innerHTML=html||"No instalments added yet.";
+}).join("");
 }
+
+document.getElementById("history").innerHTML=
+history.length?history.map(h=>
+`<p>${escapeHTML(h.phone)} — <b>${money(h.amount)}</b><br><small>${h.date}</small></p>`
+).join(""):"<p class='muted'>No payments recorded yet.</p>";
+}
+
+function escapeHTML(value){
+return String(value).replace(/[&<>"']/g,c=>({
+"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+}[c]));
+}
+
+render();
+</script>
+</body>
+</html>
+
+.stat h2{margin:8px 0;color:#124b87;font-size:21px}
+h3{margin-top:0}
+input,button{width:100%;padding:13px;margin:7px 0;border-radius:9px;font-size:15px}
+input{border:1px solid #cbd5e1}
+button{border:0;background:#1261a0;color:white;font-weight:bold}
+button:active{opacity:.8}
+.pay{background:#168451}
+.delete{background:#bd3545}
+.plan{border:1px solid #e2e8f0;padding:14px;border-radius:12px;margin:12px 0}
+.progress{height:9px;background:#e2e8f0;border-radius:10px;overflow:hidden}
+.bar{height:100%;background:#168451}
+.muted{color:#64748b;font-size:13px}
+</style>
+</head>
+<body>
+
+<header>
+<h1>GATESH</h1>
+<p>My Phone Instalment Manager</p>
+</header>
+
+<div class="container">
+
+<div class="stats">
+<div class="stat">
+<small>Total Phone Cost</small>
+<h2 id="total">KSh 0</h2>
+</div>
+<div class="stat">
+<small>Total Paid</small>
+<h2 id="paid">KSh 0</h2>
+</div>
+<div class="stat">
+<small>Remaining Balance</small>
+<h2 id="balance">KSh 0</h2>
+</div>
+<div class="stat">
+<small>Active Plans</small>
+<h2 id="count">0</h2>
+</div>
+</div>
+
+<div class="card">
+<h3>+ Add Phone Instalment</h3>
+<input id="phone" placeholder="Phone name/model">
+<input id="price" type="number" min="1" placeholder="Total phone price (KSh)">
+<input id="deposit" type="number" min="0" placeholder="Deposit already paid (KSh)">
+<input id="monthly" type="number" min="1" placeholder="Monthly instalment (KSh)">
+<label>Next payment date</label>
+<input id="date" type="date">
+<button onclick="addPlan()">Add Phone Plan</button>
+</div>
+
+<div class="card">
+<h3>My Phone Plans</h3>
+<div id="plans"></div>
+</div>
+
+<div class="card">
+<h3>Payment History</h3>
+<div id="history"></div>
+</div>
+
+</div>
+
+<script>
+let plans=JSON.parse(localStorage.getItem("gateshPlans")||"[]");
+let history=JSON.parse(localStorage.getItem("gateshHistory")||"[]");
+
+function money(n){
+return "KSh "+Number(n).toLocaleString("en-KE");
+}
+
+function save(){
+localStorage.setItem("gateshPlans",JSON.stringify(plans));
+localStorage.setItem("gateshHistory",JSON.stringify(history));
+render();
+}
+
+function addPlan(){
+let phone=document.getElementById("phone").value.trim();
+let price=Number(document.getElementById("price").value);
+let deposit=Number(document.getElementById("deposit").value||0);
+let monthly=Number(document.getElementById("monthly").value);
+let date=document.getElementById("date").value;
+
+if(!phone||price<=0||monthly<=0||deposit<0||deposit>price){
+alert("Please enter valid phone details.");
+return;
+}
+
+plans.push({
+id:Date.now(),
+phone,price,paid:deposit,monthly,date
+});
+
+document.getElementById("phone").value="";
+document.getElementById("price").value="";
+document.getElementById("deposit").value="";
+document.getElementById("monthly").value="";
+document.getElementById("date").value="";
+
+save();
+alert("Phone plan added successfully!");
+}
+
+function makePayment(id){
+let plan=plans.find(p=>p.id===id);
+let amount=prompt("Enter payment amount in KSh:");
+
+if(amount===null)return;
+
+amount=Number(amount);
+
+if(!Number.isFinite(amount)||amount<=0){
+alert("Enter a valid amount.");
+return;
+}
+
+if(amount>plan.price-plan.paid){
+alert("Payment is greater than the remaining balance.");
+return;
+}
+
+plan.paid+=amount;
+
+history.unshift({
+phone:plan.phone,
+amount,
+date:new Date().toLocaleDateString()
+});
+
+save();
+alert("Payment recorded successfully!");
+}
+
+function deletePlan(id){
+if(!confirm("Delete this phone plan?"))return;
+plans=plans.filter(p=>p.id!==id);
+save();
+}
+
+function render(){
+let total=plans.reduce((s,p)=>s+p.price,0);
+let paid=plans.reduce((s,p)=>s+p.paid,0);
+let balance=total-paid;
+
+document.getElementById("total").textContent=money(total);
+document.getElementById("paid").textContent=money(paid);
+document.getElementById("balance").textContent=money(balance);
+document.getElementById("count").textContent=plans.filter(p=>p.paid<p.price).length;
+
+let output=document.getElementById("plans");
+
+if(!plans.length){
+output.innerHTML="<p class='muted'>No phone plans added yet.</p>";
+}else{
+output.innerHTML=plans.map(p=>{
+let remaining=p.price-p.paid;
+let percent=Math.min(100,(p.paid/p.price)*100);
+
+return `
+<div class="plan">
+<h3>${escapeHTML(p.phone)}</h3>
+<p>Total: <b>${money(p.price)}</b></p>
+<p>Paid: ${money(p.paid)}</p>
+<p>Remaining: <b>${money(remaining)}</b></p>
+<p>Monthly instalment: ${money(p.monthly)}</p>
+<p>Next payment: ${p.date||"Not set"}</p>
+<div class="progress">
+<div class="bar" style="width:${percent}%"></div>
+</div>
+<p class="muted">${percent.toFixed(1)}% paid</p>
+${remaining>0?`<button class="pay" onclick="makePayment(${p.id})">Record Payment</button>`:"<p><b>FULLY PAID ✓</b></p>"}
+<button class="delete" onclick="deletePlan(${p.id})">Delete Plan</button>
+</div>`;
+}).join("");
+}
+
+document.getElementById("history").innerHTML=
+history.length?history.map(h=>
+`<p>${escapeHTML(h.phone)} — <b>${money(h.amount)}</b><br><small>${h.date}</small></p>`
+).join(""):"<p class='muted'>No payments recorded yet.</p>";
+}
+
+function escapeHTML(value){
+return String(value).replace(/[&<>"']/g,c=>({
+"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+}[c]));
+}
+
 render();
 </script>
 </body>
