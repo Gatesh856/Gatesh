@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -8,221 +7,207 @@
 <style>
 *{box-sizing:border-box}
 body{margin:0;background:#f1f4f9;color:#172033;font-family:Arial,sans-serif}
-header{background:#123c72;color:white;padding:22px 18px}
-header h2{margin:0;font-size:25px}
-header p{margin:7px 0 0;color:#dceaff}
+header{background:#123c72;color:white;padding:24px 18px}
+header h1{margin:0;font-size:25px}
+header p{margin:7px 0 0}
 main{max-width:650px;margin:auto;padding:16px}
-.card{background:white;padding:17px;border-radius:13px;margin-bottom:15px;box-shadow:0 2px 9px #0000000c}
-h3{margin:0 0 14px;color:#123c72}
+.card{background:white;padding:17px;border-radius:13px;margin-bottom:15px;box-shadow:0 2px 8px #0001}
+h2{font-size:18px;color:#123c72;margin:0 0 14px}
 .stats{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.stat{background:#eaf1fb;padding:14px;border-radius:10px}
-.stat small{color:#58677d}
-.stat strong{display:block;font-size:20px;margin-top:7px}
-input,button{width:100%;padding:12px;margin:6px 0;border-radius:8px;font-size:15px}
-input{border:1px solid #ccd5e1}
-button{border:0;background:#123c72;color:white;font-weight:bold;cursor:pointer}
-button.secondary{background:#e6edf7;color:#123c72}
-button.danger{background:#a52b35}
-label{font-size:13px;font-weight:bold;color:#46546a}
-.progress{height:12px;background:#e3e9f1;border-radius:10px;overflow:hidden}
-.progress div{height:100%;background:#159765;width:0%}
-.item{border-bottom:1px solid #e6eaf0;padding:12px 0}
+.stat{background:#edf3fb;padding:13px;border-radius:9px}
+.stat small{color:#59677b}
+.stat strong{display:block;margin-top:7px;font-size:19px}
+label{display:block;font-size:13px;font-weight:bold;margin-top:12px}
+input{width:100%;padding:12px;margin-top:6px;border:1px solid #ccd5e1;border-radius:8px;font-size:15px}
+button{width:100%;padding:13px;margin-top:12px;border:0;border-radius:8px;background:#123c72;color:white;font-weight:bold;font-size:15px}
+.secondary{background:#e7eef8;color:#123c72}
+.item{padding:12px 0;border-bottom:1px solid #e5e9ef}
 .item:last-child{border:0}
-.muted{color:#69778a;font-size:13px}
-.amount{font-weight:bold;color:#159765}
-footer{text-align:center;padding:15px;color:#718096;font-size:12px}
+.muted{font-size:13px;color:#718096}
+.progress{height:10px;background:#e2e8f0;border-radius:10px;margin-top:15px;overflow:hidden}
+#bar{height:100%;width:0;background:#159765}
+footer{text-align:center;color:#718096;font-size:12px;padding:20px}
 </style>
 </head>
 <body>
 
 <header>
-<h2>GATESH</h2>
-<p>Daily Payments Management</p>
+<h1>GATESH</h1>
+<p>Daily Payments Manager</p>
 </header>
 
 <main>
 
-<div class="card">
-<h3>Payment Dashboard</h3>
+<section class="card">
+<h2>Payment Dashboard</h2>
 <div class="stats">
-<div class="stat"><small>Total Price</small><strong id="total">KSh 0</strong></div>
-<div class="stat"><small>Total Paid</small><strong id="paid">KSh 0</strong></div>
-<div class="stat"><small>Balance</small><strong id="balance">KSh 0</strong></div>
-<div class="stat"><small>Daily Payment</small><strong id="daily">KSh 0</strong></div>
+<div class="stat"><small>Phone Price</small><strong id="priceView">KSh 0</strong></div>
+<div class="stat"><small>Total Paid</small><strong id="paidView">KSh 0</strong></div>
+<div class="stat"><small>Remaining Balance</small><strong id="balanceView">KSh 0</strong></div>
+<div class="stat"><small>Daily Instalment</small><strong id="dailyView">KSh 0</strong></div>
 </div>
-<br>
-<div class="progress"><div id="progress"></div></div>
-<p class="muted" id="percentage">0% completed</p>
-</div>
+<div class="progress"><div id="bar"></div></div>
+<p class="muted" id="percent">0% paid</p>
+</section>
 
-<div class="card">
-<h3>Customer Details</h3>
+<section class="card">
+<h2>Customer Details</h2>
 <label>Customer Name</label>
-<input id="customer" placeholder="Enter customer name">
+<input id="customer" placeholder="Customer name">
 <label>Phone Number</label>
-<input id="phone" placeholder="Enter phone number">
-<label>Phone / Product Description</label>
-<input id="product" placeholder="Enter phone model">
-<button onclick="saveDetails()">Save Customer Details</button>
-</div>
+<input id="phone" placeholder="Customer phone number">
+<label>Phone Model</label>
+<input id="model" placeholder="Phone model">
+<button onclick="saveCustomer()">Save Customer</button>
+</section>
 
-<div class="card">
-<h3>Instalment Settings</h3>
+<section class="card">
+<h2>Daily Instalment Settings</h2>
 <label>Total Phone Price (KSh)</label>
-<input type="number" id="price" min="0" placeholder="e.g. 20000">
-<label>Fixed Daily Instalment (KSh)</label>
-<input type="number" id="dailyAmount" min="0" placeholder="e.g. 200">
-<label>First Payment Date</label>
-<input type="date" id="startDate">
-<button onclick="saveSettings()">Save Instalment Settings</button>
-</div>
+<input id="price" type="number" min="1" placeholder="Enter phone price">
+<label>Fixed Daily Payment (KSh)</label>
+<input id="daily" type="number" min="1" placeholder="Enter daily payment">
+<label>Start Date</label>
+<input id="start" type="date">
+<button onclick="saveSettings()">Save Settings</button>
+</section>
 
-<div class="card">
-<h3>Record Daily Payment</h3>
-<label>Amount Paid (KSh)</label>
-<input type="number" id="paymentAmount" min="1" placeholder="Enter amount">
+<section class="card">
+<h2>Record Payment</h2>
+<label>Amount Received (KSh)</label>
+<input id="amount" type="number" min="1" placeholder="Amount received">
 <label>Payment Date</label>
-<input type="date" id="paymentDate">
+<input id="date" type="date">
 <label>M-Pesa Transaction Code</label>
-<input id="reference" placeholder="Enter transaction code">
-<button onclick="addPayment()">Record Payment</button>
-<p class="muted">Only record payments that have actually been received and verified.</p>
-</div>
+<input id="reference" placeholder="Transaction code">
+<button onclick="recordPayment()">Record Payment</button>
+<p class="muted">Record only payments that have been received and verified.</p>
+</section>
 
-<div class="card">
-<h3>M-Pesa Details</h3>
+<section class="card">
+<h2>M-Pesa Payment Details</h2>
 <label>Payment Number</label>
-<input id="mpesa" placeholder="Enter M-Pesa payment number">
-<button onclick="saveMpesa()">Save M-Pesa Details</button>
-</div>
+<input id="mpesa" placeholder="Enter payment number">
+<button onclick="saveMpesa()">Save Number</button>
+</section>
 
-<div class="card">
-<h3>Payment History</h3>
-<div id="history"><p class="muted">No payments recorded yet.</p></div>
-<button class="secondary" onclick="exportHistory()">Download Payment History</button>
-</div>
+<section class="card">
+<h2>Payment History</h2>
+<div id="history"><p class="muted">No payments recorded.</p></div>
+<button class="secondary" onclick="downloadHistory()">Download Payment History</button>
+</section>
 
 </main>
 
-<footer>Gatesh Daily Payments • Your payment management app</footer>
+<footer>Gatesh Daily Payments Manager</footer>
 
 <script>
-const defaults={
-customer:"",
-phone:"",
-product:"",
-price:0,
-daily:0,
-startDate:"",
-mpesa:"",
-payments:[]
+const KEY="gatesh_daily_v2";
+const empty={
+customer:"",phone:"",model:"",
+price:0,daily:0,start:"",
+mpesa:"",payments:[]
 };
 
 let data;
 try{
-data={...defaults,...JSON.parse(localStorage.getItem("gateshData")||"{}")};
-}catch(e){
-data={...defaults};
-}
+data={...empty,...JSON.parse(localStorage.getItem(KEY)||"{}")};
+}catch(e){data={...empty};}
 
 function save(){
-localStorage.setItem("gateshData",JSON.stringify(data));
+localStorage.setItem(KEY,JSON.stringify(data));
 }
 
 function money(n){
 return "KSh "+Number(n||0).toLocaleString("en-KE");
 }
 
-function totalPaid(){
+function paidTotal(){
 return data.payments.reduce((s,p)=>s+Number(p.amount),0);
 }
 
-function refresh(){
-let paid=totalPaid();
-let balance=Math.max(0,Number(data.price)-paid);
-let percent=data.price>0?Math.min(100,paid/data.price*100):0;
-
-document.getElementById("total").textContent=money(data.price);
-document.getElementById("paid").textContent=money(paid);
-document.getElementById("balance").textContent=money(balance);
-document.getElementById("daily").textContent=money(data.daily);
-document.getElementById("progress").style.width=percent+"%";
-document.getElementById("percentage").textContent=percent.toFixed(1)+"% completed";
-
-let history=document.getElementById("history");
-
-if(data.payments.length===0){
-history.innerHTML='<p class="muted">No payments recorded yet.</p>';
-}else{
-history.innerHTML=[...data.payments].reverse().map(p=>`
-<div class="item">
-<strong>${money(p.amount)}</strong>
-<span class="amount"> • Paid</span>
-<div class="muted">${p.date} | Ref: ${escapeHTML(p.reference||"Not provided")}</div>
-</div>`).join("");
-}
-}
-
-function escapeHTML(s){
-return String(s).replace(/[&<>"']/g,c=>({
-"&":"&amp;","<":"&lt;",">":"&gt;",
-'"':"&quot;","'":"&#39;"
+function safe(s){
+return String(s||"").replace(/[&<>"']/g,c=>({
+"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
 }[c]));
 }
 
-function saveDetails(){
+function refresh(){
+const paid=paidTotal();
+const balance=Math.max(0,Number(data.price)-paid);
+const percent=data.price>0?Math.min(100,paid/data.price*100):0;
+
+document.getElementById("priceView").textContent=money(data.price);
+document.getElementById("paidView").textContent=money(paid);
+document.getElementById("balanceView").textContent=money(balance);
+document.getElementById("dailyView").textContent=money(data.daily);
+document.getElementById("bar").style.width=percent+"%";
+document.getElementById("percent").textContent=percent.toFixed(1)+"% paid";
+
+document.getElementById("history").innerHTML=
+data.payments.length?
+[...data.payments].reverse().map(p=>`
+<div class="item">
+<strong>${money(p.amount)}</strong>
+<div class="muted">${safe(p.date)} · Ref: ${safe(p.reference||"None")}</div>
+</div>`).join("")
+:'<p class="muted">No payments recorded.</p>';
+}
+
+function saveCustomer(){
 data.customer=document.getElementById("customer").value.trim();
 data.phone=document.getElementById("phone").value.trim();
-data.product=document.getElementById("product").value.trim();
+data.model=document.getElementById("model").value.trim();
 save();
-alert("Customer details saved.");
+alert("Customer saved.");
 }
 
 function saveSettings(){
-let price=Number(document.getElementById("price").value);
-let daily=Number(document.getElementById("dailyAmount").value);
-let start=document.getElementById("startDate").value;
-
+const price=Number(document.getElementById("price").value);
+const daily=Number(document.getElementById("daily").value);
 if(price<=0||daily<=0){
-alert("Enter a valid total price and daily payment.");
+alert("Enter a valid price and daily payment.");
 return;
 }
-if(totalPaid()>price){
-alert("Total price cannot be less than payments already recorded.");
+if(price<paidTotal()){
+alert("Price cannot be lower than payments already received.");
 return;
 }
-
 data.price=price;
 data.daily=daily;
-data.startDate=start;
+data.start=document.getElementById("start").value;
 save();
 refresh();
-alert("Instalment settings saved.");
+alert("Settings saved.");
 }
 
-function addPayment(){
-let amount=Number(document.getElementById("paymentAmount").value);
-let date=document.getElementById("paymentDate").value;
-let reference=document.getElementById("reference").value.trim();
+function recordPayment(){
+const amount=Number(document.getElementById("amount").value);
+const date=document.getElementById("date").value;
+const reference=document.getElementById("reference").value.trim();
 
+if(!data.price){
+alert("Set the phone price first.");
+return;
+}
 if(amount<=0||!date){
-alert("Enter a valid amount and payment date.");
+alert("Enter a valid amount and date.");
 return;
 }
-if(amount>Math.max(0,data.price-totalPaid())){
-alert("Payment exceeds the outstanding balance.");
+if(amount>data.price-paidTotal()){
+alert("Amount exceeds the remaining balance.");
 return;
 }
-if(reference&&data.payments.some(p=>p.reference.toLowerCase()===reference.toLowerCase())){
-alert("This M-Pesa transaction code has already been recorded.");
+if(reference&&data.payments.some(p=>
+p.reference.toLowerCase()===reference.toLowerCase())){
+alert("This transaction code is already recorded.");
 return;
 }
 
 data.payments.push({amount,date,reference});
 save();
 refresh();
-
-document.getElementById("paymentAmount").value="";
+document.getElementById("amount").value="";
 document.getElementById("reference").value="";
 alert("Payment recorded successfully.");
 }
@@ -230,16 +215,16 @@ alert("Payment recorded successfully.");
 function saveMpesa(){
 data.mpesa=document.getElementById("mpesa").value.trim();
 save();
-alert("M-Pesa details saved.");
+alert("Payment number saved.");
 }
 
-function exportHistory(){
-let rows=[["Date","Amount","Reference"]];
+function downloadHistory(){
+const rows=[["Date","Amount","M-Pesa Reference"]];
 data.payments.forEach(p=>rows.push([p.date,p.amount,p.reference]));
-let csv=rows.map(r=>r.map(v=>'"'+String(v).replace(/"/g,'""')+'"').join(",")).join("\n");
-let blob=new Blob([csv],{type:"text/csv"});
-let url=URL.createObjectURL(blob);
-let a=document.createElement("a");
+const csv=rows.map(r=>r.map(v=>'"'+String(v).replace(/"/g,'""')+'"').join(",")).join("\n");
+const blob=new Blob([csv],{type:"text/csv"});
+const url=URL.createObjectURL(blob);
+const a=document.createElement("a");
 a.href=url;
 a.download="Gatesh-Payment-History.csv";
 a.click();
@@ -248,14 +233,15 @@ URL.revokeObjectURL(url);
 
 document.getElementById("customer").value=data.customer;
 document.getElementById("phone").value=data.phone;
-document.getElementById("product").value=data.product;
+document.getElementById("model").value=data.model;
 document.getElementById("price").value=data.price||"";
-document.getElementById("dailyAmount").value=data.daily||"";
-document.getElementById("startDate").value=data.startDate;
+document.getElementById("daily").value=data.daily||"";
+document.getElementById("start").value=data.start;
 document.getElementById("mpesa").value=data.mpesa;
-document.getElementById("paymentDate").value=new Date().toLocaleDateString("en-CA");
+document.getElementById("date").value=new Date().toLocaleDateString("en-CA");
 
 refresh();
 </script>
 </body>
 </html>
+
